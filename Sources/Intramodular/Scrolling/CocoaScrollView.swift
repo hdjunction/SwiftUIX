@@ -71,16 +71,11 @@ extension CocoaScrollView {
         then({ $0.configuration.alwaysBounceHorizontal = alwaysBounceHorizontal })
     }
     
-    /// Adds a condition whether for whether the collection view disables bouncing when scrolling reaches the end of the content
+    /// Adds a condition whether for whether the collection view disables bouncing when scrolling reaches the end of the content.
     public func scrollBounceDisabled(_ disabled: Bool) -> Self {
         then {
-            if $0.configuration.axes.contains(.horizontal) {
-                $0.configuration.alwaysBounceHorizontal = !disabled
-            }
-
-            if $0.configuration.axes.contains(.vertical) {
-                $0.configuration.alwaysBounceVertical = !disabled
-            }
+            $0.configuration.alwaysBounceHorizontal = !disabled
+            $0.configuration.alwaysBounceVertical = !disabled
         }
     }
     
@@ -144,13 +139,15 @@ extension CocoaScrollView {
 
 #endif
 
+// MARK: - Auxiliary Implementation -
+
 struct _CocoaScrollViewPage: Equatable {
     let index: Int
     let rect: CGRect
 }
 
 extension View {
-    public func scrollPage(index: Int) -> some View {
+    private func scrollPage(index: Int) -> some View {
         background(GeometryReader { geometry in
             Color.clear.preference(
                 key: ArrayReducePreferenceKey<_CocoaScrollViewPage>.self,

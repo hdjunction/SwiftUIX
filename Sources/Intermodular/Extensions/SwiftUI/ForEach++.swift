@@ -19,7 +19,7 @@ extension ForEach where Content: View {
     public init<_Element>(
         _ data: Data,
         @ViewBuilder content: @escaping (_Element) -> Content
-    ) where Data.Element == KeyPathHashIdentifiableValue<_Element, ID> {
+    ) where Data.Element == _KeyPathHashIdentifiableValue<_Element, ID> {
         self.init(data) {
             content($0.value)
         }
@@ -93,6 +93,16 @@ extension ForEach where Data.Element: Identifiable, Content: View, ID == Data.El
     }
 }
 
+extension ForEach where ID: CaseIterable & Hashable, ID.AllCases: RandomAccessCollection, Content: View, Data == ID.AllCases {
+    /// Creates an instance that uniquely identifies and creates views over `ID.allCases`.
+    public init(
+        _ type: ID.Type,
+        @ViewBuilder content: @escaping (ID) -> Content
+    ) {
+        self.init(ID.allCases, id: \.self, content: content)
+    }
+}
+
 extension ForEach where Content: View {
     @_disfavoredOverload
     public init<_Data: MutableCollection>(
@@ -126,7 +136,6 @@ extension ForEach where Content: View {
     }
 }
 
-
 // MARK: - Auxiliary Implementation -
 
 extension Binding {
@@ -146,8 +155,8 @@ extension Binding {
 extension RandomAccessCollection {
     public func elements<ID>(
         identifiedBy id: KeyPath<Element, ID>
-    ) -> AnyRandomAccessCollection<KeyPathHashIdentifiableValue<Element, ID>> {
-        .init(lazy.map({ KeyPathHashIdentifiableValue(value: $0, keyPath: id) }))
+    ) -> AnyRandomAccessCollection<_KeyPathHashIdentifiableValue<Element, ID>> {
+        .init(lazy.map({ _KeyPathHashIdentifiableValue(value: $0, keyPath: id) }))
     }
 }
 
