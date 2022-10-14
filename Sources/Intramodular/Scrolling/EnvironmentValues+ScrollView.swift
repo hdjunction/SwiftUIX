@@ -61,12 +61,6 @@ extension View {
     }
     #endif
     
-    /// Adds a condition that controls whether users can scroll within this view.
-    public func scrollDisabled(_ disabled: Bool) -> some View {
-        environment(\.isScrollEnabled, !disabled)
-    }
-    
-    @available(*, message: "isScrollEnabled(_:) is deprecated, use scrollDisabled(_:) instead")
     public func isScrollEnabled(_ isEnabled: Bool) -> some View {
         environment(\.isScrollEnabled, isEnabled)
     }
